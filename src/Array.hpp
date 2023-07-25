@@ -1,7 +1,7 @@
 #ifndef MYSTD_ARRAY
 #define MYSTD_ARRAY
 
-#include "c_std.hpp"
+#include <initializer_list>
 #include "Types.hpp"
 #include "Memory.hpp"
 

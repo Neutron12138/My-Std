@@ -10,6 +10,7 @@
 #include "String.hpp"
 #include "Array.hpp"
 #include "Vector.hpp"
+#include "Deque.hpp"
 #include "Exception.hpp"
 
 #endif

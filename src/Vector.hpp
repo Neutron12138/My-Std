@@ -1,9 +1,6 @@
 #ifndef MYSTD_VECTOR
 #define MYSTD_VECTOR
 
-#include "c_std.hpp"
-#include "Types.hpp"
-#include "Memory.hpp"
 #include "Container.hpp"
 
 namespace MyStd
@@ -41,29 +38,31 @@ namespace MyStd
     template <typename ElementType>
     ElementType *array_pop_back(const ElementType *arr, Size_T size)
     {
-        return Null;
+        if (arr == Null || size == 0)
+            throw "empty array";
+
+        ElementType *new_arr = new ElementType[size - 1];
+        memory_copy(new_arr, arr, size - 1);
+
+        return new_arr;
     }
 
     /// @brief 向量类
     /// @tparam m_ElementType 元素类型
     template <typename m_ElementType>
-    class Vector : public ResizableContainer<m_ElementType>
+    class Vector : public ArrayContainer<m_ElementType>
     {
     public:
         using ElementType = m_ElementType;
         using SelfType = Vector<ElementType>;
-        using ParentType = ResizableContainer<m_ElementType>;
-
-    private:
-        ElementType *m_data = Null;
-        Size_T m_size = 0;
+        using ParentType = ArrayContainer<m_ElementType>;
 
     public:
         Vector() = default;
 
         Vector(Size_T size)
         {
-            ParentType::resize(size);
+            ParentType::allocate(size);
         }
 
         Vector(const std::initializer_list<ElementType> &vec)
@@ -79,39 +78,37 @@ namespace MyStd
     public:
         SelfType &operator=(const std::initializer_list<ElementType> &vec)
         {
-            m_size = vec.size();
-            m_data = memory_copy(vec.begin(), vec.size());
+            ParentType::_get_size() = vec.size();
+            ParentType::_get_data() = memory_copy(vec.begin(), vec.size());
             return *this;
         }
 
         SelfType &operator=(const SelfType &vec)
         {
-            m_size = vec.size();
-            m_data = memory_copy(vec.begin(), vec.size());
+            ParentType::_get_size() = vec.size();
+            ParentType::_get_data() = memory_copy(vec.begin(), vec.size());
             return *this;
         }
 
     public:
         SelfType &push_back(const ElementType &value)
         {
-            ElementType *new_data = array_push_back(m_data, m_size, value);
-            delete[] m_data;
-            m_data = new_data;
-            m_size++;
+            ElementType *new_data = array_push_back(
+                ParentType::_get_data(), ParentType::_get_size(), value);
+            ParentType::_reset(new_data, ParentType::_get_size() + 1);
 
             return *this;
         }
 
-        ElementType pop()
+        ElementType pop_back()
         {
             if (ParentType::empty())
                 throw "vector is empty";
 
             ElementType result = ParentType::last();
-            ElementType *new_data = array_pop_back(m_data, m_size);
-            delete[] m_data;
-            m_data = new_data;
-            m_size--;
+            ElementType *new_data = array_pop_back(
+                ParentType::_get_data(), ParentType::_get_size());
+            ParentType::_reset(new_data, ParentType::_get_size() - 1);
 
             return result;
         }
