@@ -3,7 +3,7 @@
 int main()
 {
     // 测试memory_copy()
-    c_std::printf("\n-----\n");
+    c_std::printf("\n-----memory_copy()\n");
     int a[10];
     const int b[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     MyStd::memory_copy(a, b, 10);
@@ -11,7 +11,7 @@ int main()
         c_std::printf("%d ", a[i]);
 
     // 测试string_copy()
-    c_std::printf("\n-----\n");
+    c_std::printf("\n-----string_copy()\n");
     c_std::printf("%d", MyStd::string_length("123"));
     char str1[4];
     const char *str2 = "abc";
@@ -19,7 +19,7 @@ int main()
     c_std::printf("%s\n", str1);
 
     // 测试异常
-    c_std::printf("\n-----\n");
+    c_std::printf("\n-----exception\n");
     MyStd::ExceptionPosition ep(__LINE__, __FILE__);
     c_std::printf("%d %s\n", ep.line, ep.file);
     try
@@ -33,20 +33,27 @@ int main()
     }
 
     // 测试String
-    c_std::printf("\n-----\n");
+    c_std::printf("\n-----String\n");
     MyStd::String str3 = "aabbcc";
     c_std::printf("%s\n", str3.data());
 
     // 测试Array
-    c_std::printf("\n-----\n");
+    c_std::printf("\n-----Array\n");
     MyStd::Array<int, 5> arr = {5, 4, 3, 2, 1};
     c_std::printf("%d ", arr.size());
     for (auto iter = arr.begin(); iter != arr.end(); iter++)
         c_std::printf("%d ", *iter);
 
+    // 测试Container
+    {
+        c_std::printf("\n-----Container\n");
+        MyStd::ArrayContainer<int> c = {9, 7, 5, 3, 1};
+        c_std::printf("%d ", c.find_first(MyStd::Equal<int, 5>()));
+    }
+
     // 测试Vector
     {
-        c_std::printf("\n-----\n");
+        c_std::printf("\n-----Vector\n");
         MyStd::Vector<int> vec;
         for (int i = 0; i < 5; i++)
             vec.push_back(-i);
@@ -57,7 +64,7 @@ int main()
 
     // 测试Deque
     {
-        c_std::printf("\n-----\n");
+        c_std::printf("\n-----Deque\n");
         MyStd::Deque<int> deq;
         for (int i = 0; i < 5; i++)
             deq.push_front(-i);

@@ -32,7 +32,7 @@ namespace MyStd
             throw "empty array";
 
         ElementType *new_arr = new ElementType[size - 1];
-        memory_copy(new_arr + 1, arr, size - 1);
+        memory_copy(new_arr, arr + 1, size - 1);
 
         return new_arr;
     }
@@ -52,15 +52,9 @@ namespace MyStd
 
         Deque(Size_T size) : ParentType(size) {}
 
-        Deque(const std::initializer_list<ElementType> &deq)
-        {
-            *this = deq;
-        }
+        Deque(const std::initializer_list<ElementType> &deq) : ParentType(deq) {}
 
-        Deque(const SelfType &deq)
-        {
-            *this = deq;
-        }
+        Deque(const SelfType &deq) : ParentType(deq) {}
 
     public:
         SelfType &push_front(const ElementType &value)

@@ -4,6 +4,7 @@
 #include "c_std.hpp"
 #include "Types.hpp"
 
+#include "Algorithm.hpp"
 #include "IO.hpp"
 #include "Memory.hpp"
 #include "Container.hpp"

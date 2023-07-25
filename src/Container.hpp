@@ -57,9 +57,19 @@ namespace MyStd
     public:
         ArrayContainer() = default;
 
-        ArrayContainer(const SelfType &from)
+        ArrayContainer(Size_T size)
         {
-            *this = from;
+            allocate(size);
+        }
+
+        ArrayContainer(const std::initializer_list<ElementType> &c)
+        {
+            *this = c;
+        }
+
+        ArrayContainer(const SelfType &c)
+        {
+            *this = c;
         }
 
         ~ArrayContainer()
@@ -69,10 +79,17 @@ namespace MyStd
         }
 
     public:
-        SelfType &operator=(const SelfType &from)
+        SelfType &operator=(const std::initializer_list<ElementType> &c)
         {
-            m_data = memory_copy(from.m_data);
-            m_size = from.m_size;
+            m_size = c.size();
+            m_data = memory_copy(c.begin(), c.size());
+            return *this;
+        }
+
+        SelfType &operator=(const SelfType &c)
+        {
+            m_size = c.m_size;
+            m_data = memory_copy(c.m_data);
             return *this;
         }
 
@@ -162,6 +179,13 @@ namespace MyStd
         SelfType copy() const
         {
             return *this;
+        }
+
+    public:
+        template <typename FuncType>
+        Size_T find_first(FuncType func)
+        {
+            return array_find_first(m_data, m_size, func);
         }
 
     protected:

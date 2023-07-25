@@ -60,35 +60,11 @@ namespace MyStd
     public:
         Vector() = default;
 
-        Vector(Size_T size)
-        {
-            ParentType::allocate(size);
-        }
+        Vector(Size_T size) : ParentType(size) {}
 
-        Vector(const std::initializer_list<ElementType> &vec)
-        {
-            *this = vec;
-        }
+        Vector(const std::initializer_list<ElementType> &vec) : ParentType(vec) {}
 
-        Vector(const SelfType &vec)
-        {
-            *this = vec;
-        }
-
-    public:
-        SelfType &operator=(const std::initializer_list<ElementType> &vec)
-        {
-            ParentType::_get_size() = vec.size();
-            ParentType::_get_data() = memory_copy(vec.begin(), vec.size());
-            return *this;
-        }
-
-        SelfType &operator=(const SelfType &vec)
-        {
-            ParentType::_get_size() = vec.size();
-            ParentType::_get_data() = memory_copy(vec.begin(), vec.size());
-            return *this;
-        }
+        Vector(const SelfType &vec) : ParentType(vec) {}
 
     public:
         SelfType &push_back(const ElementType &value)
