@@ -1,12 +1,10 @@
 #ifndef MYSTD_STRING
 #define MYSTD_STRING
 
-#include "Types.hpp"
-#include "Memory.hpp"
+#include "Deque.hpp"
 
 namespace MyStd
 {
-
     /// @brief 测量字符串长度，不包括'\0'
     /// @tparam CharType 字符类型
     /// @param str 字符串
@@ -47,18 +45,53 @@ namespace MyStd
         return memory_copy<CharType, MemoryType>(str, length + 1);
     }
 
+    /// @brief 向str末尾追加字符c
+    /// @tparam CharType 字符类型
+    /// @param str 字符串
+    /// @param c 待追加字符
+    /// @return 新字符串
+    template <typename CharType>
+    CharType *string_append(const CharType *str, const CharType &c)
+    {
+        const Size_T length = string_length(str);
+
+        CharType *new_str = new CharType[length + 1 + 1];
+        if (str != Null)
+            memory_copy(new_str, str, length);
+        new_str[length] = c;
+        new_str[length + 1] = '\0';
+
+        return new_str;
+    }
+    /// @brief 向str1末尾追加str2
+    /// @tparam CharType 字符类型
+    /// @param str1 字符串1
+    /// @param str2 字符串2
+    /// @return 新字符串
+    template <typename CharType>
+    CharType *string_append(const CharType *str1, const CharType *str2)
+    {
+        const Size_T length1 = string_length(str1);
+        const Size_T length2 = string_length(str2);
+
+        CharType *new_str = new CharType[length1 + length2 + 1];
+        if (str1 != Null)
+            memory_copy(new_str, str1, length1);
+        if (str2 != Null)
+            memory_copy(new_str + length1, str2, length2 + 1);
+
+        return new_str;
+    }
+
     /// @brief 字符串类
     /// @tparam m_CharType 字符类型
     template <typename m_CharType = char>
-    class String
+    class String : public Deque<m_CharType>
     {
     public:
         using CharType = m_CharType;
         using SelfType = String<CharType>;
-
-    private:
-        CharType *m_data = Null;
-        Size_T m_length = 0;
+        using ParentType = Deque<CharType>;
 
     public:
         String() = default;
@@ -73,79 +106,89 @@ namespace MyStd
             *this = str;
         }
 
-        ~String()
-        {
-            if (m_data != Null)
-                delete[] m_data;
-
-            m_length = 0;
-        }
-
     public:
         SelfType &operator=(const CharType *str)
         {
-            m_length = string_length(str);
-            m_data = string_copy(str);
+            ParentType::_reset(string_copy(str), string_length(str));
             return *this;
         }
 
         SelfType &operator=(const SelfType &str)
         {
-            m_length = str.m_length;
-            m_data = string_copy(str.m_data);
+            ParentType::_reset(string_copy(str.data()), str.length());
             return *this;
         }
 
-        CharType &operator[](Size_T index)
+        SelfType operator+(const CharType &c) const
         {
-            if (index >= m_length)
-                throw "index out of range";
-
-            return m_data[index];
+            return copy().append(c);
         }
 
-        const CharType &operator[](Size_T index) const
+        SelfType &operator+=(const CharType &c)
         {
-            if (index >= m_length)
-                throw "index out of range";
+            append(c);
+            return *this;
+        }
 
-            return m_data[index];
+        SelfType operator+(const CharType *str) const
+        {
+            return copy().append(str);
+        }
+
+        SelfType &operator+=(const CharType *str)
+        {
+            append(str);
+            return *this;
+        }
+
+        SelfType operator+(const SelfType &str) const
+        {
+            return copy().append(str);
+        }
+
+        SelfType &operator+=(const SelfType &str)
+        {
+            append(str);
+            return *this;
         }
 
     public:
         Size_T length() const
         {
-            return m_length;
+            return ParentType::size();
         }
 
-        const CharType *data() const
+    public:
+        SelfType &append(const CharType &c)
         {
-            return m_data;
+            CharType *new_str = string_append(
+                ParentType::data(), c);
+            ParentType::_reset(new_str, length() + 1);
+
+            return *this;
         }
 
-        CharType *begin()
+        SelfType &append(const CharType *str)
         {
-            return m_data;
+            CharType *new_str = string_append(
+                ParentType::data(), str);
+            ParentType::_reset(new_str, string_length(new_str));
+
+            return *this;
         }
 
-        const CharType *begin() const
+        SelfType &append(const SelfType &str)
         {
-            return m_data;
-        }
+            CharType *new_str = string_append(
+                ParentType::data(), str.data());
+            ParentType::_reset(new_str, length() + str.length());
 
-        CharType *end()
-        {
-            return m_data + m_length;
-        }
-
-        const CharType *end() const
-        {
-            return m_data + m_length;
+            return *this;
         }
 
         SelfType copy() const
         {
-            return *this;
+            return static_cast<SelfType>(*this);
         }
     };
 

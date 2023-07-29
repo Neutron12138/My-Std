@@ -1,5 +1,11 @@
 #include "../src/MyStd.hpp"
 
+void test();
+struct Test
+{
+    void test();
+};
+
 int main()
 {
     // 测试memory_copy()
@@ -12,7 +18,7 @@ int main()
 
     // 测试string_copy()
     c_std::printf("\n-----string_copy()\n");
-    c_std::printf("%d", MyStd::string_length("123"));
+    c_std::printf("%d ", MyStd::string_length("123"));
     char str1[4];
     const char *str2 = "abc";
     MyStd::string_copy(str1, str2);
@@ -32,11 +38,6 @@ int main()
         c_std::printf("%s\n", exception);
     }
 
-    // 测试String
-    c_std::printf("\n-----String\n");
-    MyStd::String str3 = "aabbcc";
-    c_std::printf("%s\n", str3.data());
-
     // 测试Array
     c_std::printf("\n-----Array\n");
     MyStd::Array<int, 5> arr = {5, 4, 3, 2, 1};
@@ -47,8 +48,13 @@ int main()
     // 测试Container
     {
         c_std::printf("\n-----Container\n");
-        MyStd::ArrayContainer<int> c = {9, 7, 5, 3, 1};
-        c_std::printf("%d ", c.find_first(MyStd::Equal<int, 5>()));
+        MyStd::ArrayContainer<int> c = {15, 11, 11, 9, 7, 5, 3, 1};
+        c.resize(5);
+        c.resize(10);
+        c_std::printf("%d ", c.find_first(MyStd::Equal<int, 11>()));
+        c_std::printf("%d ", c.find_last(MyStd::Equal<int, 11>()));
+        for (auto iter = c.begin(); iter != c.end(); iter++)
+            c_std::printf("%d ", *iter);
     }
 
     // 测试Vector
@@ -57,6 +63,7 @@ int main()
         MyStd::Vector<int> vec;
         for (int i = 0; i < 5; i++)
             vec.push_back(-i);
+        vec += vec;
         c_std::printf("\n%d ", vec.size());
         for (auto iter = vec.begin(); iter != vec.end(); iter++)
             c_std::printf("%d ", *iter);
@@ -73,5 +80,32 @@ int main()
             c_std::printf("%d ", *iter);
     }
 
+    // 测试String
+    c_std::printf("\n-----String\n");
+    MyStd::String str3 = "aabbcc";
+    ((str3 += "123") += 'z') += str3;
+    c_std::printf("%s\n", str3.data());
+
+    // 测试Function
+    c_std::printf("\n-----Function\n");
+    MyStd::Function<void()> func1 = test;
+    func1();
+    /*MyStd::Function<void()> func2 = []()
+    { c_std::printf("%s\n", "good job,lambda"); };
+    func2();*/
+    /*MyStd::Function<void (Test::*)()> func3 = &Test::test;
+    Test t;
+    func3(t);*/
+
     return 0;
+}
+
+void test()
+{
+    c_std::printf("%s\n", "good job,test()");
+}
+
+void Test::test()
+{
+    c_std::printf("%s\n", "good job,Test::test()");
 }

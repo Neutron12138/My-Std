@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include "Types.hpp"
 #include "Memory.hpp"
+#include "Math.hpp"
 
 namespace MyStd
 {
@@ -39,6 +40,71 @@ namespace MyStd
             if (func(*iter))
                 return iter;
         return end;
+    }
+
+    template <typename ElementType, typename FuncType>
+    Size_T array_find_last(const ElementType *arr, Size_T size, FuncType func)
+    {
+        for (Size_T i = size - 1; i >= 0; i--)
+            if (func(arr[i]))
+                return i;
+        return size;
+    }
+
+    template <typename ElementType, typename FuncType>
+    ElementType *array_find_last(ElementType *begin, ElementType *end, FuncType func)
+    {
+        for (ElementType *iter = end - 1; iter != begin - 1; iter--)
+            if (func(*iter))
+                return iter;
+        return end;
+    }
+
+    template <typename ElementType, typename FuncType>
+    const ElementType *array_find_last(const ElementType *begin, const ElementType *end, FuncType func)
+    {
+        for (ElementType *iter = end - 1; iter != begin - 1; iter--)
+            if (func(*iter))
+                return iter;
+        return end;
+    }
+
+    template <typename ElementType>
+    ElementType *array_resize(const ElementType *arr, Size_T size, Size_T new_size)
+    {
+        if (new_size == 0)
+            return Null;
+
+        ElementType *new_arr = new ElementType[new_size];
+        memory_set(new_arr, static_cast<ElementType>(0), new_size);
+
+        if (arr != Null && size != 0)
+            memory_copy(new_arr, arr, min(size, new_size));
+        else if (arr == Null && size == 0)
+            ;
+        else
+            throw "invalid arr/size";
+
+        return new_arr;
+    }
+
+    template <typename ElementType>
+    void array_check(const ElementType *arr, Size_T size)
+    {
+        if ((arr == Null && size != 0) ||
+            (arr != Null && size == 0))
+            throw "invalid array";
+    }
+
+    template <typename ElementType>
+    bool array_is_empty(const ElementType *arr, Size_T size)
+    {
+        array_check(arr, size);
+
+        if (arr == Null && size == 0)
+            return true;
+        else
+            return false;
     }
 
     /// @brief 可以调整大小的容器
@@ -123,10 +189,27 @@ namespace MyStd
         SelfType &allocate(Size_T size)
         {
             if (size == 0)
+            {
                 _clean_up();
+            }
+            else
+            {
+                m_size = size;
+                m_data = new ElementType[size];
+            }
 
-            m_size = size;
-            m_data = new ElementType[size];
+            return *this;
+        }
+
+        SelfType &clear()
+        {
+            _clean_up();
+        }
+
+        SelfType &resize(Size_T new_size)
+        {
+            ElementType *new_data = array_resize(m_data, m_size, new_size);
+            _reset(new_data, new_size);
 
             return *this;
         }
@@ -178,18 +261,24 @@ namespace MyStd
 
         SelfType copy() const
         {
-            return *this;
+            return static_cast<SelfType>(*this);
         }
 
     public:
         template <typename FuncType>
-        Size_T find_first(FuncType func)
+        Size_T find_first(FuncType func) const
         {
             return array_find_first(m_data, m_size, func);
         }
 
+        template <typename FuncType>
+        Size_T find_last(FuncType func) const
+        {
+            return array_find_last(m_data, m_size, func);
+        }
+
     protected:
-        ElementType *_get_data()
+        ElementType *&_get_data()
         {
             return m_data;
         }

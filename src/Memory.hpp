@@ -80,6 +80,16 @@ namespace MyStd
         return result;
     }
 
+    template <typename ElementType>
+    void memory_set(ElementType *mem, const ElementType &value, Size_T size)
+    {
+        if (mem == Null)
+            throw "mem cannot be Null";
+
+        for (Size_T i = 0; i < size; i++)
+            mem[i] = value;
+    }
+
 } // namespace MyStd
 
 #endif

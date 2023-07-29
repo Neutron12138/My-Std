@@ -60,8 +60,8 @@ namespace MyStd
         SelfType &push_front(const ElementType &value)
         {
             ElementType *new_data = array_push_front(
-                ParentType::_get_data(), ParentType::_get_size(), value);
-            ParentType::_reset(new_data, ParentType::_get_size() + 1);
+                ParentType::data(), ParentType::size(), value);
+            ParentType::_reset(new_data, ParentType::size() + 1);
             return *this;
         }
 
@@ -72,10 +72,16 @@ namespace MyStd
 
             ElementType result = ParentType::first();
             ElementType *new_data = array_pop_front(
-                ParentType::_get_data(), ParentType::_get_size());
-            ParentType::_reset(new_data, ParentType::_get_size() - 1);
+                ParentType::data(), ParentType::size());
+            ParentType::_reset(new_data, ParentType::size() - 1);
 
             return result;
+        }
+
+    public:
+        SelfType copy() const
+        {
+            return static_cast<SelfType>(*this);
         }
     };
 
