@@ -12,8 +12,10 @@ namespace MyStd
         if ((arr == Null && size != 0) || (arr != Null && size == 0))
             throw "invalid arr/size";
 
+        const Size_T new_size = size + 1;
+
         // 分配新数组
-        ElementType *new_arr = new ElementType[size + 1];
+        ElementType *new_arr = new ElementType[new_size];
 
         // 判断旧数组是否不为空
         if (arr != Null)
@@ -31,8 +33,10 @@ namespace MyStd
         if (arr == Null || size == 0)
             throw "empty array";
 
-        ElementType *new_arr = new ElementType[size - 1];
-        memory_copy(new_arr, arr + 1, size - 1);
+        const Size_T new_size = size - 1;
+
+        ElementType *new_arr = new ElementType[new_size];
+        memory_copy(new_arr, arr + 1, new_size);
 
         return new_arr;
     }

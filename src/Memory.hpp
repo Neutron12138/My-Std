@@ -5,8 +5,6 @@
 
 namespace MyStd
 {
-    class Exception;
-
     /// @brief 把src拷贝到dst中
     /// @tparam MemoryType 内存块类型
     /// @param dst 目标地址
@@ -78,6 +76,29 @@ namespace MyStd
         ElementType *result = new ElementType[size];
         memory_copy(result, src, size);
         return result;
+    }
+
+    template <typename MemoryType = Int64_T>
+    void memory_copy(void *dst_begin, const void *src_begin, const void *src_end)
+    {
+    }
+
+    template <typename ElementType, typename MemoryType = Int64_T>
+    void memory_copy(ElementType *dst_begin, const ElementType *src_begin, const ElementType *src_end)
+    {
+        memory_copy(
+            reinterpret_cast<void *>(dst_begin),
+            reinterpret_cast<const void *>(src_begin),
+            reinterpret_cast<const void *>(src_end));
+    }
+
+    template <typename ElementType, typename MemoryType = Int64_T>
+    ElementType *memory_copy(const ElementType *src_begin, const ElementType *src_end)
+    {
+        if (src_begin == Null || src_end == Null)
+            throw "src cannot be Null";
+        if (src_begin == src_end)
+            throw "invalid array";
     }
 
     template <typename ElementType>

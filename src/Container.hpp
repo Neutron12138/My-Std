@@ -178,7 +178,7 @@ namespace MyStd
     public:
         bool empty() const
         {
-            return m_size == 0;
+            return m_data == Null || m_size == 0;
         }
 
         Size_T size() const
@@ -241,21 +241,33 @@ namespace MyStd
 
         ElementType &last()
         {
+            if (empty())
+                throw "container is empty";
+
             return m_data[m_size - 1];
         }
 
         const ElementType &last() const
         {
+            if (empty())
+                throw "container is empty";
+
             return m_data[m_size - 1];
         }
 
         ElementType &first()
         {
+            if (empty())
+                throw "container is empty";
+
             return m_data[0];
         }
 
         const ElementType &first() const
         {
+            if (empty())
+                throw "container is empty";
+
             return m_data[0];
         }
 

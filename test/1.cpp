@@ -81,21 +81,53 @@ int main()
     }
 
     // 测试String
-    c_std::printf("\n-----String\n");
-    MyStd::String str3 = "aabbcc";
-    ((str3 += "123") += 'z') += str3;
-    c_std::printf("%s\n", str3.data());
+    {
+        c_std::printf("\n-----String\n");
+        MyStd::String str3 = "aabbcc";
+        ((str3 += "123") += 'z') += str3;
+        c_std::printf("%s\n", str3.data());
+    }
 
     // 测试Function
     c_std::printf("\n-----Function\n");
     MyStd::Function<void()> func1 = test;
-    func1();
-    /*MyStd::Function<void()> func2 = []()
+    /*func1();
+    MyStd::Function<void()> func2 = []()
     { c_std::printf("%s\n", "good job,lambda"); };
     func2();*/
     /*MyStd::Function<void (Test::*)()> func3 = &Test::test;
     Test t;
     func3(t);*/
+
+    // 测试Stack
+    {
+        c_std::printf("\n-----Stack\n");
+        MyStd::Stack<int> s;
+        for (int i = 0; i < 10; i++)
+            s.push(i);
+        c_std::printf("\n%d ", s.size());
+        try
+        {
+            for (; !s.empty();)
+                c_std::printf("%d ", s.pop());
+        }
+        catch (const char *e)
+        {
+            c_std::printf("[%s]", e);
+        }
+    }
+
+    // 测试数学
+    c_std::printf("\n-----Math\n");
+    c_std::printf("%d %d %d %d %d %d %f\n",
+                  MyStd::min(10, 12, 25, 3, 47, 5),
+                  MyStd::max(17, 45, 20, 5, 53, 12),
+                  MyStd::clamp(3, 10, 20),
+                  MyStd::clamp(27, 10, 20),
+                  MyStd::abs(-10),
+                  MyStd::abs(10),
+                  MyStd::map_range<float>(10, 0, 100, 0, 10));
+    // c_std::printf("%f ",MyStd::LinearFunction(0,0,100,100).b);
 
     return 0;
 }
